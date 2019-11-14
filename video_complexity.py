@@ -38,8 +38,8 @@ def image_complexity_fft(image):
     
     filter_x = np.linspace(0, 1, filter_nx)
     filter_y = np.linspace(0, 1, filter_ny)
-    filter_x = np.concatenate((filter_x, np.flip(filter_x[1:-1])))
-    filter_y = np.concatenate((filter_y, np.flip(filter_y[1:-1])))  
+    filter_x = np.concatenate((filter_x, np.flip(filter_x[1:-1], 0)))
+    filter_y = np.concatenate((filter_y, np.flip(filter_y[1:-1], 0)))  
     
     image_fft = np.fft.fft2(image, axes = (0, 1))
     image_filtered_fft = image_fft * filter_x[:, np.newaxis, np.newaxis]
