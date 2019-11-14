@@ -246,7 +246,7 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
     parser.add_argument("media", nargs='+', help="the media files to analyze")
-    parser.add_argument("-m", "--methods", help="the methods to use on the specified files, comma separated without spaces. if not specified, all avialable methods are used")
+    parser.add_argument("-m", "--methods", help="the methods to use on the specified files, comma separated without spaces. if not specified, all available methods are used")
     parser.add_argument("-v", "--verbose", help="verbose", action="store_true")
     parser.add_argument("-o", "--output", help="write output to file")
     
