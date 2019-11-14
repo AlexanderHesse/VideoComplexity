@@ -18,7 +18,7 @@ def image_complexity_box(radius):
     def f(image):
         kernel = np.ones(radius * 2 + 1) / (radius * 2 + 1)
         image_blurred = scipy.ndimage.filters.convolve1d(image, kernel, 0)
-        image_blurred = scipy.ndimage.filters.convolve1d(image, kernel, 1)
+        image_blurred = scipy.ndimage.filters.convolve1d(image_blurred, kernel, 1)
         diff = np.abs(image - image_blurred)
         return np.sum(diff)
     return f
