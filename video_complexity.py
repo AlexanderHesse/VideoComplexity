@@ -67,7 +67,7 @@ def image_complexity_iterated(filter, levels = None):
             
             image_small = cv2.resize(image_small, (image_small_ny//2, image_small_nx//2), interpolation = cv2.INTER_LINEAR)
             
-            total += filter(image_small) * 4**(-level)
+            total += filter(image_small)
             level += 1
         
         return total
