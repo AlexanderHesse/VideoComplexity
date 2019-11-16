@@ -149,7 +149,11 @@ def load_video(filename):
 def load_image(filename):
     return cv2.imread(filename) / 255
 
-
+def get_resolution(filename):
+    if is_image(filename):
+        return load_image(filename).shape[:2]
+    for i, f in load_video(filename):
+        return f.shape[:2]
 
 # --- main ---
 
@@ -170,7 +174,7 @@ def run(paths, methods = None, verbose = False):
     if methods == None:
         methods = sorted(sys.modules[__name__].methods)
     
-    Row = make_row_type(['path', 'frame_index'] + methods)
+    Row = make_row_type(['path', 'frame_index', 'resolution'] + methods)
     
     for path in paths:
         results = {}
@@ -189,8 +193,10 @@ def run(paths, methods = None, verbose = False):
                 for i, val in method(video):
                     results.setdefault(i, dict())[method_name] = val
         
+        resolution = get_resolution(path)
+        resolution_string = 'x'.join(str(d) for d in resolution)
         for i in sorted(results):
-            yield Row(path = path, frame_index = i, **results[i])
+            yield Row(path = path, frame_index = i, resolution = resolution_string, **results[i])
 
 
 def make_row_type(cols):

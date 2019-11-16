@@ -35,7 +35,7 @@ def geometric_mean(l):
     return exp(sum(log(i) for i in l)/len(l))
 
 def by_geometric_mean(reference_data, apply_data, verbose = False):
-    methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index')]
+    methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index', 'resolution')]
     data = [row for row in reference_data if None not in row]
         
     by_video = group_by(data, 'path')
@@ -50,7 +50,7 @@ def by_geometric_mean(reference_data, apply_data, verbose = False):
 
 
 def by_first_frame(base, data, verbose = False):
-    methods = [i for i in data[0].columns if i not in ('path', 'frame_index')]
+    methods = [i for i in data[0].columns if i not in ('path', 'frame_index', 'resolution')]
     
     by_path = group_by(data, 'path')
     for rows in by_path:
