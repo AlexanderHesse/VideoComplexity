@@ -144,10 +144,10 @@ def load_video(filename):
         has_frame, frame = video.read()
         if not has_frame:
             break
-        yield i, frame / 255
+        yield i, np.transpose(frame, (1, 0, 2)) / 255
 
 def load_image(filename):
-    return cv2.imread(filename) / 255
+    return np.transpose(cv2.imread(filename), (1, 0, 2)) / 255
 
 def get_resolution(filename):
     if is_image(filename):
