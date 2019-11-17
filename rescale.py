@@ -36,7 +36,7 @@ def geometric_mean(l):
 
 def by_geometric_mean(reference_data, apply_data, verbose = False):
     methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index', 'resolution')]
-    data = [row for row in reference_data if None not in row]
+    data = [row for row in reference_data if None not in [row.get(i) for i in methods]]
         
     by_video = group_by(data, 'path')
     avg_by_video = [[geometric_mean(l) for col, l in columns(rows) if col in methods] for rows in by_video]
