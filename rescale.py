@@ -67,7 +67,21 @@ def by_first_frame(base, data, verbose = False):
         
         for row in scaled(rows, factors, verbose):
             yield row
+
+def by_average(reference_data, base_value, data, verbose):
+    avg = lambda l: sum(l) / len(l)
     
+    methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    reference_data = [row for row in reference_data if None not in [row.get(i) for i in methods]]
+    
+    by_path = group_by(reference_data, 'path')
+    avg_by_path = [[avg(l) for col, l in columns(rows) if col in methods] for rows in by_path]
+    avg_all = [avg(l) for l in zip(*avg_by_path)]
+    
+    factors = { m:base_value/i for m, i in zip(methods, avg_all) }
+    
+    for row in scaled(data, factors, verbose):
+        yield row
 
 if __name__ == '__main__':
     import argparse
@@ -76,6 +90,7 @@ if __name__ == '__main__':
     parser.add_argument("INPUT_CSV", nargs='?', help="the csv file to rescale, stdin if not specified")
     parser.add_argument("--geometric-average", help="scale INPUT_CSV by the geometric average of REFERENCE_FILE", action="store_true")
     parser.add_argument("--first-frame",  help="scale INPUT_CSV by normalizing the first frame of each video to BASE_VALUE", action="store_true")
+    parser.add_argument("--average",  help="scale INPUT_CSV by the factors obtained from setting the average frame complexity of each video in REFERENCE_FILE to BASE_VALUE", action="store_true")
     parser.add_argument("--base-value", metavar="BASE_VALUE", type=float, default=1., help="the base value methods will normalize to")
     parser.add_argument("--reference-file", metavar="REFERENCE_FILE", help="reference file for scale methods, INPUT_CSV if not specified")
     parser.add_argument("-v", "--verbose", help="verbose", action="store_true")
@@ -97,6 +112,8 @@ if __name__ == '__main__':
         gen = by_first_frame(args.base_value, data, args.verbose)
     elif args.geometric_average:
         gen = by_geometric_mean(reference_data, data, args.verbose)
+    elif args.average:
+        gen = by_average(reference_data, args.base_value, data, args.verbose)
     
     if gen == None:
         sys.exit(0)
