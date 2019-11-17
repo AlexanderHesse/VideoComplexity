@@ -17,8 +17,10 @@ The results are written in CSV format on stdout.
 
 Since each method has its own scale of complexity, a rescale tool is provided to normalize the results. Currently, the following methods are available:
 
-* scale by the geometric average of a reference result file (-g)
-* scale by normalizing to the first frame of each video (-b)
+Parameter | Arguments | Description
+--- | --- | ---
+--geometric-average | [--reference-file=INPUT_CSV] | scale by the geometric average of a reference result file
+--first-frame | [--base-value=1] | scale by normalizing the first frame of each video to a base value
 
 ## Requirements
 
@@ -31,7 +33,7 @@ Since each method has its own scale of complexity, a rescale tool is provided to
 
 ```
 video_complexity.py [-v] [-m/--methods <methods>] [-o <out file>] <media>+
-rescale.py [-v] [-g <reference file> | -b <base value>] [-o <out file>] <csv file>
+rescale.py [-v] <--geometric-average | --first-frame> [--reference-file <reference file>] [--base-value <base value>] [-o <out file>] [csv file]
 ```
 
 Methods are specified comma-separated and without spaces.
@@ -41,12 +43,16 @@ Methods are specified comma-separated and without spaces.
 ```
 $ video_complexity.py -v reference_videos/*.mp4 -o reference.csv
 $ video_complexity.py -v ducks.mp4 -o ducks.csv
-$ rescale.py -g reference.csv ducks.csv -o ducks_normalized.csv
+$ rescale.py --reference-file reference.csv --geometric-average ducks.csv -o ducks_normalized.csv
 ```
 
 ```
 $ video_complexity.py -m image:gaussian,image:webp,video:gaussian -o ducks.csv ducks.mp4
-$ rescale.py -b 1000 -o ducks_normalized.csv ducks.csv
+$ rescale.py --base-value 1000 --first-frame -o ducks_normalized.csv ducks.csv
+```
+
+```
+$ video_complexity.py -v ducks.mp4 | rescale.py --first-frame > ducks.csv
 ```
 
 ## Implementation Details

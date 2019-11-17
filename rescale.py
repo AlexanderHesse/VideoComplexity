@@ -73,21 +73,29 @@ if __name__ == '__main__':
     import argparse
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("csv", help="the csv file to rescale")
-    parser.add_argument("-g", metavar="REFERENCE_CSV_PATH", help="scale by the geometric average of a reference result csv file")
-    parser.add_argument("-b", metavar="BASE_NUM", type=float, help="scale by normalizing to the first frame of each video")
+    parser.add_argument("INPUT_CSV", nargs='?', help="the csv file to rescale, stdin if not specified")
+    parser.add_argument("--geometric-average", help="scale INPUT_CSV by the geometric average of REFERENCE_FILE", action="store_true")
+    parser.add_argument("--first-frame",  help="scale INPUT_CSV by normalizing the first frame of each video to BASE_VALUE", action="store_true")
+    parser.add_argument("--base-value", metavar="BASE_VALUE", type=float, default=1., help="the base value methods will normalize to")
+    parser.add_argument("--reference-file", metavar="REFERENCE_FILE", help="reference file for scale methods, INPUT_CSV if not specified")
     parser.add_argument("-v", "--verbose", help="verbose", action="store_true")
     parser.add_argument("-o", "--output", help="write output to file")
     
     args = parser.parse_args()
     
-    data = list(read_csv(open(args.csv)))
+    if args.INPUT_CSV != None:
+        data = list(read_csv(open(args.INPUT_CSV)))
+    else:
+        data = list(read_csv(sys.stdin))
+    
+    reference_data = data
+    if args.reference_file != None:
+        reference_data = list(read_csv(open(args.reference_file)))
     
     gen = None
-    if args.b != None:
-        gen = by_first_frame(args.b, data, args.verbose)
-    elif args.g != None:
-        reference_data = list(read_csv(open(args.g)))
+    if args.first_frame:
+        gen = by_first_frame(args.base_value, data, args.verbose)
+    elif args.geometric_average:
         gen = by_geometric_mean(reference_data, data, args.verbose)
     
     if gen == None:
