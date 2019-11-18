@@ -83,11 +83,20 @@ def by_average(reference_data, base_value, data, verbose):
     for row in scaled(data, factors, verbose):
         yield row
 
+
+def per_pixel(data):
+    methods = [i for i in data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    
+    for row in data:
+        width, height = [int(d) for d in row.get("resolution").split('x')]
+        yield row.map(lambda col, val: val / (width * height) if col in methods and val != None else val)
+
 if __name__ == '__main__':
     import argparse
     
     parser = argparse.ArgumentParser()
     parser.add_argument("INPUT_CSV", nargs='?', help="the csv file to rescale, stdin if not specified")
+    parser.add_argument("--per-pixel", help="calculate the average complexity per pixel instead of the whole frame", action="store_true")
     parser.add_argument("--geometric-average", help="scale INPUT_CSV by the geometric average of REFERENCE_FILE", action="store_true")
     parser.add_argument("--first-frame",  help="scale INPUT_CSV by normalizing the first frame of each video to BASE_VALUE", action="store_true")
     parser.add_argument("--average",  help="scale INPUT_CSV by the factors obtained from setting the average frame complexity of each video in REFERENCE_FILE to BASE_VALUE", action="store_true")
@@ -106,6 +115,10 @@ if __name__ == '__main__':
     reference_data = data
     if args.reference_file != None:
         reference_data = list(read_csv(open(args.reference_file)))
+    
+    if args.per_pixel:
+        data = list(per_pixel(data))
+        reference_data = list(per_pixel(reference_data))
     
     gen = None
     if args.first_frame:

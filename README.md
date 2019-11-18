@@ -23,6 +23,8 @@ Parameter | Arguments | Description
 --first-frame | [--base-value=1] | scale by normalizing the first frame of each video to a base value
 --average | [--reference-file=INPUT_CSV] [--base-value=1] | scale by defining the average frame to have a complexity of the base value
 
+To get the average complexity per pixel instead of the complexity of a whole frame, pass `--per-pixel` to the rescale tool.
+
 ## Requirements
 
 * Python 2
@@ -34,7 +36,7 @@ Parameter | Arguments | Description
 
 ```
 video_complexity.py [-v] [-m/--methods <methods>] [-o <out file>] <media>+
-rescale.py [-v] <--geometric-average | --first-frame> [--reference-file <reference file>] [--base-value <base value>] [-o <out file>] [csv file]
+rescale.py [-v] [--per-pixel] <--geometric-average | --first-frame> [--reference-file <reference file>] [--base-value <base value>] [-o <out file>] [csv file]
 ```
 
 Methods are specified comma-separated and without spaces.
@@ -49,7 +51,7 @@ $ rescale.py --geometric-average --reference-file reference.csv ducks.csv -o duc
 
 ```
 $ video_complexity.py -m image:gaussian,image:webp,video:gaussian -o ducks.csv ducks.mp4
-$ rescale.py --average --base-value 100 -o ducks_normalized.csv ducks.csv
+$ rescale.py --per-pixel --average --base-value 100 -o ducks_normalized.csv ducks.csv
 ```
 
 ```
