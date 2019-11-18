@@ -133,7 +133,8 @@ if __name__ == '__main__':
         gen = by_average(reference_data, args.base_value, data, args.verbose)
     
     if gen == None:
-        sys.exit(0)
+        print >> sys.stderr, "No scaling method specified"
+        sys.exit(1)
     
     if args.output != None:
         with open(args.output, 'w') as f:
