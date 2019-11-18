@@ -36,7 +36,7 @@ To get the average complexity per pixel instead of the complexity of a whole fra
 
 ```
 video_complexity.py [-v] [-m/--methods <methods>] [-o <out file>] <media>+
-rescale.py [-v] [--per-pixel] <--geometric-average | --first-frame> [--reference-file <reference file>] [--base-value <base value>] [-o <out file>] [csv file]
+rescale.py [-v] [--per-pixel] <--geometric-average | --first-frame | --average> [--reference-file <reference file>] [--base-value <base value>] [-o <out file>] [csv file]
 ```
 
 Methods are specified comma-separated and without spaces.
