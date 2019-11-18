@@ -22,10 +22,20 @@ def columns(rows):
             yield rows[0].columns[c], [row[c] for row in rows]
 
 
+def get_methods(data):
+    methods = [i for i in data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    methods_with_data = [col for col, l in columns(data) if col in methods and any(i != None for i in l)]
+    return methods_with_data
+
 def scaled(data, factors, verbose):
     if verbose:
         for method, factor in factors.iteritems():
             print >> sys.stderr, method, factor
+    
+    methods = get_methods(data)
+    if any(method not in factors for method in methods):
+        print >> sys.stderr, "Could not determine scale factors for all methods (too many missing data points?)"
+        sys.exit(1)
     
     for row in data:
         yield row.map(lambda col, val: val * factors[col] if col in factors and val != None else val)
@@ -35,7 +45,7 @@ def geometric_mean(l):
     return exp(sum(log(i) for i in l)/len(l))
 
 def by_geometric_mean(reference_data, apply_data, verbose = False):
-    methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    methods = get_methods(reference_data)
     data = [row for row in reference_data if None not in [row.get(i) for i in methods]]
         
     by_video = group_by(data, 'path')
@@ -50,18 +60,12 @@ def by_geometric_mean(reference_data, apply_data, verbose = False):
 
 
 def by_first_frame(base, data, verbose = False):
-    methods = [i for i in data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    methods = get_methods(data)
     
     by_path = group_by(data, 'path')
     for rows in by_path:
-        if rows[0].get('frame_index') == None:
-            # it's an image
-            for row in rows:
-                yield row
-            continue
-            
         rows = sorted(rows, key = lambda row: row.get('frame_index'))
-        first = [row for row in rows if None not in row][0]
+        first = [row for row in rows if None not in [row.get(i) for i in methods]][0]
         
         factors = { m:base/first.get(m) for m in methods }
         
@@ -71,7 +75,7 @@ def by_first_frame(base, data, verbose = False):
 def by_average(reference_data, base_value, data, verbose):
     avg = lambda l: sum(l) / len(l)
     
-    methods = [i for i in reference_data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    methods = get_methods(reference_data)
     reference_data = [row for row in reference_data if None not in [row.get(i) for i in methods]]
     
     by_path = group_by(reference_data, 'path')
@@ -85,7 +89,7 @@ def by_average(reference_data, base_value, data, verbose):
 
 
 def per_pixel(data):
-    methods = [i for i in data[0].columns if i not in ('path', 'frame_index', 'resolution')]
+    methods = get_methods(data)
     
     for row in data:
         width, height = [int(d) for d in row.get("resolution").split('x')]
