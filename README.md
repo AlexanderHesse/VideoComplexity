@@ -21,7 +21,7 @@ Parameter | Arguments | Description
 --- | --- | ---
 --geometric-average | [--reference-file=INPUT_CSV] | scale by the geometric average of a reference result file
 --first-frame | [--base-value=1] | scale by normalizing the first frame of each video to a base value
---average | [--reference-file=INPUT_CSV] [--base-value=1] | scale by defining the average frame to have a complexity of the base value
+--average | [--reference-file=INPUT_CSV]<br>[--base-value=1] | scale by defining the average frame to have a complexity of the base value
 
 To get the average complexity per pixel instead of the complexity of a whole frame, pass `--per-pixel` to the rescale tool.
 
